@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
@@ -25,10 +26,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.lectureexamples.models.Movie
+import com.example.lectureexamples.MovieUI
 
 @Composable
-fun MovieRow(movie: Movie, onClick: (String) -> Unit = {}) {
+fun MovieRow(movie: MovieUI, onClick: (String) -> Unit = {}) {
 
     var expanded by remember {
         mutableStateOf(false)
@@ -39,37 +40,36 @@ fun MovieRow(movie: Movie, onClick: (String) -> Unit = {}) {
     )
 
 
-    Card(modifier = Modifier
-        .clickable { onClick(movie.id) }
-        .fillMaxWidth()
-        .padding(10.dp)
-        .clipToBounds()
-        .animateContentSize(
-            animationSpec = tween(
-                durationMillis = 300,
-                easing = LinearOutSlowInEasing
-            )
-        ),
+    Card(
+        modifier = Modifier
+            .clickable { onClick(movie.id) }
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clipToBounds()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300, easing = LinearOutSlowInEasing
+                )
+            ),
 
         elevation = 5.dp,
         shape = RoundedCornerShape(corner = CornerSize(15.dp)),
     ) {
         Column() {
 
-            Box(modifier = Modifier
-                .height(180.dp)
-                .fillMaxWidth(),
+            Box(
+                modifier = Modifier
+                    .height(180.dp)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.BottomCenter,
             ) {
 
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(movie.images[0])
-                        .crossfade(true)
-                        .build(),
+                    model = ImageRequest.Builder(LocalContext.current).data(movie.images[0])
+                        .crossfade(true).build(),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop
-                    , modifier = Modifier.fillMaxWidth()
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth()
                 )
 
 
@@ -86,16 +86,28 @@ fun MovieRow(movie: Movie, onClick: (String) -> Unit = {}) {
                         )
                 )
 
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp),
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
                     contentAlignment = Alignment.TopEnd
-                ){
-                    Icon(
-                        tint = MaterialTheme.colors.secondary,
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Add to favorites",
-                    )
+                ) {
+                    IconButton(
+                        onClick = {
+                           movie.fav = !movie.fav
+                        },
+                    ) {
+                        Icon(
+                            tint = MaterialTheme.colors.secondary,
+                            imageVector = if (movie.fav) {
+                                Icons.Default.Favorite
+                            } else {
+                                Icons.Default.FavoriteBorder
+                            },
+                            contentDescription = "Add to favorites",
+                        )
+                    }
+
                 }
 
 
@@ -119,9 +131,10 @@ fun MovieRow(movie: Movie, onClick: (String) -> Unit = {}) {
             }
 
             if (expanded) {
-                Column(modifier = Modifier.padding(horizontal = 20.dp, ),
-                    verticalArrangement = Arrangement.spacedBy(1.dp))
-                {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                ) {
 
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(text = "Director: " + movie.director)
@@ -132,7 +145,7 @@ fun MovieRow(movie: Movie, onClick: (String) -> Unit = {}) {
                     Spacer(modifier = Modifier.height(5.dp))
                     Divider()
                     Spacer(modifier = Modifier.height(5.dp))
-                    Text(text =  movie.plot)
+                    Text(text = movie.plot)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
 
