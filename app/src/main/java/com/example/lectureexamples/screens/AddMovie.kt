@@ -1,14 +1,17 @@
 package com.example.lectureexamples.screens
 
-
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
@@ -16,11 +19,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.lectureexamples.MovieUI
 import com.example.lectureexamples.MovieViewModel
+import com.example.lectureexamples.R
 import com.example.lectureexamples.models.getMovies
 import com.example.lectureexamples.widgets.MovieRow
 import com.example.lectureexamples.widgets.SimpleTopAppBar
+import java.util.Arrays.asList
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddMovieScreen(navController: NavHostController, movieViewModel: MovieViewModel) {
     val regex = Regex("[^0-9]")
@@ -30,6 +36,20 @@ fun AddMovieScreen(navController: NavHostController, movieViewModel: MovieViewMo
     var isButtonEnabled by remember {
         mutableStateOf(false)
     }
+
+    val genres = asList("action", "fun")
+
+    var genreItems by remember {
+        mutableStateOf(
+            genres.map { genre ->
+                ListItemSelectable(
+                    title = genre.toString(),
+                    isSelected = false
+                )
+            }
+        )
+    }
+
     Column() {
         SimpleTopAppBar(text = "Add Movie", navController = navController)
 
@@ -77,6 +97,33 @@ fun AddMovieScreen(navController: NavHostController, movieViewModel: MovieViewMo
                         data.rating = value; isButtonEnabled = isDataFilledIn(data = data)
                     },
                     label = { Text(text = " Rating") })
+
+                LazyHorizontalGrid(
+                    modifier = Modifier.height(100.dp),
+                    rows = GridCells.Fixed(3)){
+                    items(genreItems) { genreItem ->
+                        Chip(
+                            modifier = Modifier.padding(2.dp),
+                            colors = ChipDefaults.chipColors(
+                                backgroundColor = if (genreItem.isSelected)
+                                    colorResource(id = R.color.purple_200)
+                                else
+                                    colorResource(id = R.color.white)
+                            ),
+                            onClick = {
+                                genreItems = genreItems.map {
+                                    if (it.title == genreItem.title) {
+                                        genreItem.copy(isSelected = !genreItem.isSelected)
+                                    } else {
+                                        it
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(text = genreItem.title)
+                        }
+                    }
+                }
 
 
                 Button(onClick = {
@@ -131,4 +178,10 @@ data class AddMovieData(val id: String) {
     var plot by mutableStateOf("")
 
     var rating by mutableStateOf("")
+}
+
+class ListItemSelectable(var title : String, var isSelected: Boolean){
+    fun copy(isSelected: Boolean): ListItemSelectable {
+        return ListItemSelectable(title= title, isSelected)
+    }
 }
