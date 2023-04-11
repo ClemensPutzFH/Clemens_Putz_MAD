@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
@@ -51,6 +52,12 @@ fun HomeScreen(navController: NavHostController, movieViewModel: MovieViewModel)
 
                                     Icon(Icons.Filled.Favorite,null)
                                     Text(text = "Favorits")
+                                }
+
+                                Row(modifier = Modifier.clickable { navController.navigate("addMovieScreen") }){
+
+                                    Icon(Icons.Default.Add,null)
+                                    Text(text = "Add Movie")
                                 }
 
                             }
