@@ -100,7 +100,8 @@ fun AddMovieScreen(navController: NavHostController, movieViewModel: MovieViewMo
 
                 LazyHorizontalGrid(
                     modifier = Modifier.height(100.dp),
-                    rows = GridCells.Fixed(3)){
+                    rows = GridCells.Fixed(3)
+                ) {
                     items(genreItems) { genreItem ->
                         Chip(
                             modifier = Modifier.padding(2.dp),
@@ -180,8 +181,8 @@ data class AddMovieData(val id: String) {
     var rating by mutableStateOf("")
 }
 
-class ListItemSelectable(var title : String, var isSelected: Boolean){
+class ListItemSelectable(var title: String, var isSelected: Boolean) {
     fun copy(isSelected: Boolean): ListItemSelectable {
-        return ListItemSelectable(title= title, isSelected)
+        return ListItemSelectable(title = title, isSelected)
     }
 }
